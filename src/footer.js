@@ -1,7 +1,7 @@
 import './App.css';
 
 const Footer = () => {
-console.log("Tim is better than V(Biggest joke of the century)")
+
 
   return (
     <div className="footer">

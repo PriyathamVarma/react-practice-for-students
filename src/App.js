@@ -1,145 +1,116 @@
 import './App.css';
-//import axios from 'axios';
 // Import components
 import Header from './header';
 import Footer from './footer';
-import Card from './Card';
+//import Card from './Card';
 // State
 import { useState } from 'react';
 import axios from 'axios';
  
 const App = () => {
 
-  // useState hook
-  // const [arg1,setArg1] = useState([]);
-  // arg1 is the vriable
-  // setArg1 is the setter function
-  /* const arg1 = (two) =>{
-    return two;
-  }
-   */
-  //setArg1([all TheData])
-  // const arg1 = [all TheData]
+  // Data render state
+  const [data,setData] = useState([]);
 
-  // const api = [];
+// Read
+const getAPI = async () =>{
+  
+  const reqAPI = "http://localhost:8011/beasts";
 
+    try{
 
-  const sample = () =>{
-    console.log('Sample');
-  }
+      const reqData = await axios.get(reqAPI);
+      setData(reqData.data);
+      console.log(data);
 
-  const movies = [
-    {
-      movieName:"Ghost in the dark",
-      duration: 200,
-      Director:"james cameroon",
-      Cast:["Tom hanks","Tom hardy","Tom hiddelton","Tom Cruise"]
-    },
-    {
-      movieName:"Ghost in the dark2",
-      duration: 201,
-      Director:"james cameroons wife",
-      Cast:["Chris Hemsworth","Chris Evans","Chris Patt","Chris Walken"]
+    }catch(err){
+      console.log(err);
     }
-  
-  ];
-  // UseState
-  //const [arg1,arg2] = useState();
-  const [api,setApi] = useState([]);
+}
 
-  // APIs
-  const apiData = {};
+// Read Specific 
+const submitted = async (event) =>{
+  event.preventDefault();
+  // Stage 1: Posting the url
+  const _name = event.target.name.value;
+  const urlToSent = `http://localhost:8011/beast?name=${_name}`;
+  console.log(urlToSent);
 
-  // State
-  const [name,setName] = useState('something');
-  const [data,setData] = useState(movies);
+  // Stage 2: Fetching the data
+  try{
 
-  // APIS
-  const [coins,setCoins] = useState([]);
+    const dataFromExpress = await axios.get(urlToSent);
+    setData(dataFromExpress.data);
 
-  //const name = '';
-
-  // Methods
-  const functionByParent = () => {
-
-    // setter function
-    setName(Math.floor(Math.random()*10));
-    console.log("State Change "+name)
-
-
+  }catch(err){
+    console.log(err);
   }
-
-
-const addSomething = () =>{
-  
-  let newData = {
-      movieName:"Star Wars",
-      duration: 212,
-      Director:"Rian Johnson",
-      Cast:["Yodha","bay Yodha","Skywalker","Chubaca","Kanobe","Mandalorian"]
-  }
-
-  setData(currentArray => [...currentArray,newData]);
   
 }
 
-const formSubmitted = (event) =>{
+// Create
+const dataSubmitted = async(event) =>{
 
   event.preventDefault();
 
-  let movieName = event.target.name.value;
-  let duration  = event.target.duration.value;
-  let director  = event.target.director.value;
-  let cast      = event.target.cast.value;
+  const _name = event.target.name.value;
+  const _heads = event.target.heads.value;
+  const _mythology = event.target.mythology.value;
 
-
-  let newData = {
-    movieName:movieName,
-    duration: duration,
-    Director:director,
-    Cast:[cast]
-}
-
-setData(currentArray => [...currentArray,newData]);
-
-  
-}
-
-// APIS
-/*const getAPI = async() =>{
-
-  console.time();
-  
-  try {
-  const data = await axios.get('https://api.llama.fi/protocols').then(
-    res => {
-      return res.data
-    }
-  );
-  setCoins(data);
-  console.log(data);
-  
-  } catch(err) {
-    console.log(err)
+  const obj = {
+    name:_name,
+    heads:_heads,
+    mythology:_mythology
   }
 
-  console.timeEnd();
-}*/
+  console.log(obj);
 
-const getAPI = async () =>{
-  console.time();
 
-  const reqAPI = "https://api.sampleapis.com/wines/reds";
+  // Post the obj
+  try{
+    const dataSubmitting = await axios.post('http://localhost:8011/beasts',obj);
+    setData(dataSubmitting.data);
+    
+  }catch(err){
+    console.log(err);
+  }
 
-    const reqData = await axios.get(reqAPI).then(response =>{
-      return response.data;
-    }); 
-
-    setApi(reqData);
-    console.log(api);
-
-    console.timeEnd();
 }
+
+// Update --> patch
+const dataEditted = async(event) =>{
+
+  event.preventDefault();
+
+  const _id = event.target.id.value
+
+  const _name = event.target.name.value;
+  const _heads = event.target.heads.value;
+  const _mythology = event.target.mythology.value;
+
+  const obj = {
+
+    name:_name,
+    heads:_heads,
+    mythology:_mythology
+  }
+
+  console.log(obj);
+
+
+  // Post the obj
+  try{
+    const dataEditting = await axios.patch(`http://localhost:8011/beast/${_id}`,obj);
+    setData(dataEditting.data);
+    
+  }catch(err){
+    console.log(err);
+  }
+
+}
+
+
+// Destroy --> delete
 
   return (
 
@@ -147,44 +118,87 @@ const getAPI = async () =>{
 
       {/* Header comes in here */}
       <Header/>
-      
-    <form onSubmit={formSubmitted}>
-      <input type="text"   name="name" placeholder='Movie Name'/><br/>
-      <input type="number" name="duration"/><br/>
-      <input type="text"   name="director" placeholder='Movie Director'/><br/>
-      <input type="text"   name="cast" placeholder='Movie Cast'/><br/>
 
-      <input type="submit" value="submit"/>
-    </form><br/>
+        <h1>Search By Beast name</h1>
 
-    <button onClick={getAPI}>Click for APIs</button>
+        <form onSubmit={submitted}>
 
+          <input type="text"   name="name" placeholder='Beast Name'/><br/>
+          <input type="submit" value="submit"/>
 
+        </form><br/>
 
-    <button onClick={sample}>Sample</button>
-    
-      <div className="cards-container">
-      
+        <hr/>
 
+        <button onClick={getAPI}>Click for Fetching all the data</button>
 
-      {coins.map( (value,index) => {
-        return(
-          
-          <div className="card" key={index}>
+        <h1>Data</h1>
 
-              <h3>Address     : {value.address}</h3>
-              <p>Chain        : {value.chain}</p>
-              <p>1 day change : {value.change_1d}</p>
-              <p>1 Hour Chnage: {value.change_1h}</p>
+        <table>
+              <tr>
+                <th> Index </th>
+                <th> ID </th>
+                <th> Name </th>
+                <th> Heads </th>
+                <th> Mythology </th>
+                <th> Edit </th>
+                <th> Delete </th>
+              </tr>
+
+        {data.map((value,index)=>{
+          return(
+           
+              <tr key={index}>
+                <td> {index} </td>
+                <td> {value.id} </td>
+                <td>{value.name}</td>
+                <td>{value.heads}</td>
+                <td>{value.mythology}</td>
+                <td>
+                  <button> Edit </button>
+                </td>
+                <td>
+                  <button> Delete </button>
+                </td>
+              </tr>
               
             
-          </div>
-        );
-      } )} 
+          );
+        })}
+        </table>
 
-    </div>
+        <hr/>
 
-      {/* Footer component comes here */}
+        <h1>Submit the data</h1>
+
+        {/* Form for submitting the data */}
+        <form onSubmit={dataSubmitted}>
+
+          <input type="text"   name="name"  placeholder='Beast Name'/><br/>
+          <input type="number" name="heads" /><br/>
+          <input type="text"   name="mythology" placeholder='Beast Mythology'/><br/>
+          <input type="submit" value="submit"/>
+
+        </form><br/>
+
+        <hr/>
+        <h1> Edit the data </h1>
+         {/* Form for submitting the data */}
+         <form onSubmit={dataEditted}>
+
+         <input type="number"    name="id"  placeholder='Beast ID'/><br/>
+          <input type="text"   name="name"  placeholder='Beast Name'/><br/>
+          <input type="number" name="heads" /><br/>
+          <input type="text"   name="mythology" placeholder='Beast Mythology'/><br/>
+          <input type="submit" value="submit"/>
+
+        </form><br/>
+
+
+        <hr/>
+        <h1> Delete the data </h1>
+
+      
       <Footer/>
       
     </div>
